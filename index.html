@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demande de Modification d'Horaires DDSE</title>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="time"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .checkbox-item:hover {
+            background: #e9ecef;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .upload-zone {
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            background: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .upload-zone:hover {
+            background: #f0f2ff;
+            border-color: #764ba2;
+        }
+
+        .upload-zone.dragover {
+            background: #e8ebff;
+            border-color: #764ba2;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .upload-text {
+            color: #666;
+            font-size: 14px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-preview {
+            margin-top: 15px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .file-preview.active {
+            display: block;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #2e7d32;
+        }
+
+        .remove-file {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .camera-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .camera-btn:hover {
+            background: #764ba2;
+        }
+
+        .camera-btn:active {
+            transform: scale(0.98);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .required {
+            color: #f44336;
+        }
+
+        .signature-pad {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: crosshair;
+            background: white;
+            touch-action: none;
+        }
+
+        .signature-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .clear-signature {
+            padding: 8px 16px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .loading.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Demande de modification des horaires</h1>
+        <p class="subtitle">Dispositif de détention à domicile sous surveillance électronique</p>
+
+        <form id="demandeForm">
+            <!-- Informations personnelles -->
+            <div class="form-group">
+                <label>Nom <span class="required">*</span></label>
+                <input type="text" id="nom" required>
+            </div>
+
+            <div class="form-group">
+                <label>Prénom <span class="required">*</span></label>
+                <input type="text" id="prenom" required>
+            </div>
+
+
+
+            <!-- Motifs -->
+            <div class="form-group">
+                <label>Motif de la demande <span class="required">*</span></label>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="motif" value="Rendez-vous médical">
+                        <span>🏥 Rendez-vous médical</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="motif" value="Démarche administrative">
+                        <span>📄 Démarche administrative</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="motif" value="Formation professionnelle">
+                        <span>🎓 Formation professionnelle</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="motif" value="Recherche d'emploi / Entretien">
+                        <span>💼 Recherche d'emploi / Entretien</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="motif" value="Obligation familiale">
+                        <span>👨‍👩‍👧 Obligation familiale</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="autreMotif" name="motif" value="Autre">
+                        <span>✏️ Autre motif</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group" id="autreMotifDetail" style="display: none;">
+                <label>Précisez le motif</label>
+                <textarea id="motifAutre" rows="3"></textarea>
+            </div>
+
+            <!-- Dates et horaires -->
+            <div class="form-group">
+                <label>Date(s) concernée(s) <span class="required">*</span></label>
+                <div class="row">
+                    <input type="date" id="dateDebut" required>
+                    <input type="date" id="dateFin" placeholder="Si plusieurs jours">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Horaires <span class="required">*</span></label>
+                <div class="row">
+                    <div>
+                        <label style="font-weight: normal; font-size: 12px;">Heure de sortie prévue</label>
+                        <input type="time" id="heureSortie" required>
+                    </div>
+                    <div>
+                        <label style="font-weight: normal; font-size: 12px;">Heure de retour prévue</label>
+                        <input type="time" id="heureRetour" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pièce justificative -->
+            <div class="form-group">
+                <label>Pièce justificative</label>
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon">📎</div>
+                    <div class="upload-text">
+                        <strong>Cliquez pour sélectionner</strong> ou glissez-déposez<br>
+                        un document (PDF, JPG, PNG)
+                    </div>
+                    <input type="file" id="fileInput" accept="image/*,.pdf">
+                    <button type="button" class="camera-btn" id="cameraBtn">📷 Prendre une photo</button>
+                </div>
+                <div class="file-preview" id="filePreview">
+                    <div class="file-info">
+                        <span class="file-name" id="fileName"></span>
+                        <button type="button" class="remove-file" id="removeFile">✕ Retirer</button>
+                    </div>
+                    <img id="imagePreview" class="image-preview" style="display: none;">
+                </div>
+                <label class="checkbox-item" style="margin-top: 15px;">
+                    <input type="checkbox" id="justifUlterieur">
+                    <span>Je fournirai le justificatif ultérieurement</span>
+                </label>
+            </div>
+
+            <!-- Signature -->
+            <div class="form-group">
+                <label>Signature <span class="required">*</span></label>
+                <canvas id="signaturePad" class="signature-pad" width="400" height="150"></canvas>
+                <div class="signature-controls">
+                    <button type="button" class="clear-signature" id="clearSignature">Effacer</button>
+                </div>
+            </div>
+
+            <!-- Date de la demande -->
+            <div class="form-group">
+                <label>Date de la demande <span class="required">*</span></label>
+                <input type="date" id="dateDemande" required>
+            </div>
+
+            <div class="loading" id="loading">⏳ Génération du PDF en cours...</div>
+
+            <button type="submit" class="submit-btn">Générer la demande en PDF</button>
+        </form>
+    </div>
+
+    <script>
+        // Attendre que jsPDF soit complètement chargé
+        window.addEventListener('load', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+        // Gestion du canvas de signature
+        const canvas = document.getElementById('signaturePad');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let hasSignature = false;
+
+        // Adapter la taille du canvas pour mobile
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            const rect = container.getBoundingClientRect();
+            canvas.width = Math.min(400, rect.width - 40);
+            canvas.height = 150;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            hasSignature = true;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events pour mobile
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
+
+        document.getElementById('clearSignature').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            hasSignature = false;
+        });
+
+        // Gestion du motif "Autre"
+        document.getElementById('autreMotif').addEventListener('change', (e) => {
+            document.getElementById('autreMotifDetail').style.display = 
+                e.target.checked ? 'block' : 'none';
+        });
+
+        // Date du jour par défaut
+        document.getElementById('dateDemande').valueAsDate = new Date();
+
+        // Gestion de l'upload de fichier
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const filePreview = document.getElementById('filePreview');
+        const fileName = document.getElementById('fileName');
+        const imagePreview = document.getElementById('imagePreview');
+        const removeFile = document.getElementById('removeFile');
+        const cameraBtn = document.getElementById('cameraBtn');
+
+        let uploadedFile = null;
+
+        uploadZone.addEventListener('click', (e) => {
+            if (e.target !== cameraBtn) {
+                fileInput.click();
+            }
+        });
+
+        // Drag and drop
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // Bouton caméra
+        cameraBtn.addEventListener('click', () => {
+            fileInput.setAttribute('capture', 'environment');
+            fileInput.click();
+        });
+
+        function handleFile(file) {
+            uploadedFile = file;
+            fileName.textContent = file.name;
+            filePreview.classList.add('active');
+
+            // Prévisualisation si image
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.style.display = 'none';
+            }
+        }
+
+        removeFile.addEventListener('click', () => {
+            uploadedFile = null;
+            fileInput.value = '';
+            filePreview.classList.remove('active');
+            imagePreview.style.display = 'none';
+        });
+
+        // Génération du PDF
+        document.getElementById('demandeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!hasSignature) {
+                alert('Veuillez signer la demande');
+                return;
+            }
+
+            // Vérifier que jsPDF est chargé
+            if (typeof window.jspdf === 'undefined') {
+                alert('⚠️ Erreur de chargement. Veuillez:\n1. Vérifier votre connexion internet\n2. Recharger la page\n3. Réessayer');
+                loading.classList.remove('active');
+                return;
+            }
+
+            const loading = document.getElementById('loading');
+            loading.classList.add('active');
+
+            try {
+                // Récupération des données
+                const nom = document.getElementById('nom').value;
+                const prenom = document.getElementById('prenom').value;
+                
+                const motifsChecked = Array.from(document.querySelectorAll('input[name="motif"]:checked'))
+                    .map(cb => cb.value);
+                const motifAutre = document.getElementById('motifAutre').value;
+                if (motifsChecked.includes('Autre') && motifAutre) {
+                    motifsChecked[motifsChecked.indexOf('Autre')] = `Autre: ${motifAutre}`;
+                }
+
+                if (motifsChecked.length === 0) {
+                    alert('Veuillez sélectionner au moins un motif');
+                    loading.classList.remove('active');
+                    return;
+                }
+
+                const dateDebut = document.getElementById('dateDebut').value;
+                const dateFin = document.getElementById('dateFin').value;
+                const heureSortie = document.getElementById('heureSortie').value;
+                const heureRetour = document.getElementById('heureRetour').value;
+                const dateDemande = document.getElementById('dateDemande').value;
+                const justifUlterieur = document.getElementById('justifUlterieur').checked;
+
+                // Création du PDF
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+
+            // En-tête
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text('DEMANDE DE MODIFICATION DES HORAIRES', 105, 20, { align: 'center' });
+            doc.setFontSize(11);
+            doc.text('Dispositif de détention à domicile sous surveillance électronique', 105, 28, { align: 'center' });
+
+            // Ligne de séparation
+            doc.setDrawColor(102, 126, 234);
+            doc.setLineWidth(0.5);
+            doc.line(20, 32, 190, 32);
+
+            let y = 45;
+
+            // Informations personnelles
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'bold');
+            doc.text('IDENTIFICATION', 20, y);
+            y += 8;
+            doc.setFont(undefined, 'normal');
+            doc.text(`Nom : ${nom.toUpperCase()}`, 20, y);
+            y += 6;
+            doc.text(`Prénom : ${prenom}`, 20, y);
+            y += 12;
+
+            // Motifs
+            doc.setFont(undefined, 'bold');
+            doc.text('MOTIF(S) DE LA DEMANDE', 20, y);
+            y += 8;
+            doc.setFont(undefined, 'normal');
+            motifsChecked.forEach(motif => {
+                doc.text(`• ${motif}`, 25, y);
+                y += 6;
+            });
+            y += 6;
+
+            // Dates et horaires
+            doc.setFont(undefined, 'bold');
+            doc.text('DATES ET HORAIRES DEMANDÉS', 20, y);
+            y += 8;
+            doc.setFont(undefined, 'normal');
+            const dateDebutFormatted = new Date(dateDebut).toLocaleDateString('fr-FR');
+            const dateFinText = dateFin ? ` au ${new Date(dateFin).toLocaleDateString('fr-FR')}` : '';
+            doc.text(`Date(s) : ${dateDebutFormatted}${dateFinText}`, 20, y);
+            y += 6;
+            doc.text(`Heure de sortie : ${heureSortie}`, 20, y);
+            y += 6;
+            doc.text(`Heure de retour : ${heureRetour}`, 20, y);
+            y += 12;
+
+            // Pièce justificative
+            doc.setFont(undefined, 'bold');
+            doc.text('PIÈCE JUSTIFICATIVE', 20, y);
+            y += 8;
+            doc.setFont(undefined, 'normal');
+            if (uploadedFile) {
+                doc.text(`✓ Justificatif joint : ${uploadedFile.name}`, 20, y);
+                y += 6;
+            } else if (justifUlterieur) {
+                doc.text('⚠ Justificatif à fournir ultérieurement', 20, y);
+                y += 6;
+            } else {
+                doc.text('✗ Aucun justificatif fourni', 20, y);
+                y += 6;
+            }
+            y += 10;
+
+            // Signature
+            doc.setFont(undefined, 'bold');
+            doc.text(`Fait le : ${new Date(dateDemande).toLocaleDateString('fr-FR')}`, 20, y);
+            y += 10;
+            
+            // Ajouter la signature
+            const signatureData = canvas.toDataURL('image/png');
+            doc.addImage(signatureData, 'PNG', 120, y - 5, 60, 20);
+            doc.text('Signature :', 120, y + 18);
+
+            // Si fichier joint, ajouter une nouvelle page avec le justificatif
+            if (uploadedFile && uploadedFile.type.startsWith('image/')) {
+                doc.addPage();
+                doc.setFontSize(14);
+                doc.setFont(undefined, 'bold');
+                doc.text('PIÈCE JUSTIFICATIVE', 105, 20, { align: 'center' });
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgData = e.target.result;
+                    // Calculer les dimensions pour adapter l'image
+                    const img = new Image();
+                    img.onload = function() {
+                        const maxWidth = 170;
+                        const maxHeight = 250;
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Redimensionner proportionnellement
+                        if (width > maxWidth) {
+                            height = (maxWidth / width) * height;
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width = (maxHeight / height) * width;
+                            height = maxHeight;
+                        }
+                        
+                        doc.addImage(imgData, 'JPEG', 20, 30, width, height);
+                        doc.save(`Demande_MH_${nom}_${prenom}_${dateDebut}.pdf`);
+                        loading.classList.remove('active');
+                        alert('✅ Votre demande a été générée avec succès !');
+                    };
+                    img.src = imgData;
+                };
+                reader.readAsDataURL(uploadedFile);
+            } else {
+                // Sauvegarder le PDF sans pièce jointe
+                doc.save(`Demande_MH_${nom}_${prenom}_${dateDebut}.pdf`);
+                loading.classList.remove('active');
+                alert('✅ Votre demande a été générée avec succès !');
+            }
+            } catch (error) {
+                console.error('Erreur lors de la génération du PDF:', error);
+                alert('❌ Erreur lors de la génération du PDF: ' + error.message);
+                loading.classList.remove('active');
+            }
+        });
+        } // Fin de initializeApp
+    </script>
+</body>
+</html>
